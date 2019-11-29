@@ -34,7 +34,9 @@ SemEval 2016 Task 6 [see @mohammad-etal-2016-semeval]
 
 ## Others  
 
-```{r, echo = FALSE}
+BERT [see _\autoref{fig:bert_by_task_fig}_ from @devlin2018bert]
+
+```{r bert_by_task_fig, echo = FALSE, fig.height = 4, fig.width = 4, fig.align="center", fig.cap="\\label{fig:bert_by_task}BERT by Task (Source: @devlin2018bert)"}
 knitr::include_graphics(path = "images/bert_bytask.png")
 ```
 
