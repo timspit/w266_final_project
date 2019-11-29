@@ -1,0 +1,55 @@
+---
+title: "Stance Detection in Tweets"
+subtitle: "W266 Natural Language Processing - Final Project"
+author: "Alex Dessouky & Tim Spittle"
+date: "December 7, 2019"
+tags: [NLP, BERT, Deep Learning]
+abstract: [TBD - Abstract goes here]
+output:
+  pdf_document:
+    fig_caption: no
+    number_sections: yes
+    toc: no
+  md_document:
+    variant: markdown
+  html_document:
+    df_print: paged
+    toc: no
+bibliography: bibliography.bib
+---
+
+# Background and Objective  
+
+Text  
+
+## Background  
+
+More text   
+
+# Data  
+
+SemEval 2016 Task 6 [see @mohammad-etal-2016-semeval]  
+
+# Methodology  
+
+## Others  
+
+```{r, echo = FALSE}
+knitr::include_graphics(path = "images/bert_bytask.png")
+```
+
+## Ours  
+
+# Results  
+
+# Conclusion  
+
+## Discussion  
+
+# Limitations  
+
+## Error Analysis  
+
+## Further Work
+
+# References  
