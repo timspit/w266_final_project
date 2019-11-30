@@ -1,0 +1,118 @@
+---
+title: "Stance Detection in Tweets"
+subtitle: "W266 Natural Language Processing - Final Project"
+author: "Alex Dessouky & Tim Spittle"
+date: "December 7, 2019"
+tags: [NLP, BERT, Deep Learning]
+abstract: [TBD - Abstract goes here]
+output:
+  pdf_document:
+    fig_caption: no
+    number_sections: yes
+    toc: no
+  md_document:
+    variant: markdown
+  html_document:
+    df_print: paged
+    toc: no
+bibliography: bibliography.bib
+---
+
+```{r packages, include = FALSE}
+library(tidyverse)
+```
+
+# Introduction
+
+Text  
+
+## Background  
+
+More text   
+
+## Objectives  
+
+More text   
+
+# Related Work  
+
+# Data, Task, & Evaluation  
+
+SemEval 2016 Task 6 [see @mohammad-etal-2016-semeval]
+
+```{r confusion_matrix, echo = FALSE, fig.height = 4, fig.width = 4, fig.align="center", fig.cap="\\label{fig:confusion_matrix}Confusion Matrix"}
+
+label_levels = c("Against", "Favor", "None")
+
+import_topic = function(topic_name){
+  pred_data = read.csv(paste0("./final_outputs/", topic_name, "_preds.csv"))
+  true_data = read.csv(paste0("./final_outputs/", topic_name, "_true.csv"))
+  names(pred_data) = c("obs_num", "predicted_label")
+  names(true_data) = c("obs_num", "true_label")
+  merged = merge(pred_data, true_data, by = "obs_num") %>%
+    mutate(topic = topic_name
+           , predicted_label_f = case_when(predicted_label == 0 ~ "Against"
+                                         , predicted_label == 1 ~ "Favor"
+                                         , predicted_label == 2 ~ "None"
+                                         , TRUE ~ NA_character_) %>% factor(levels = label_levels)
+           , true_label_f = case_when(true_label == 0 ~ "Against"
+                                    , true_label == 1 ~ "Favor"
+                                    , true_label == 2 ~ "None"
+                                    , TRUE ~ NA_character_) %>% factor(levels = label_levels)
+    )
+  return(merged)
+}
+
+abort = import_topic(topic_name = "abort")
+atheism = import_topic(topic_name = "atheism")
+clim = import_topic(topic_name = "clim")
+hil = import_topic(topic_name = "hil")
+fem = import_topic(topic_name = "fem")
+all_topics = bind_rows(abort, atheism, clim, hil, fem)
+
+# metrics = function(y_true, y_pred){
+#   f1 = F1_Score(y_true = y_true, y_pred = y_pred, positive = c("1","2"))
+#
+#   return(f1)
+# }
+#
+# metrics(y_true = abort$true_label, y_pred = abort$predicted_label)
+
+ggplot(data =  all_topics %>% group_by(true_label_f, predicted_label_f) %>% summarise(n = n())
+       , mapping = aes(x = true_label_f, y = predicted_label_f)) +
+  geom_tile(aes(fill = n), colour = "white") +
+  geom_text(aes(label = sprintf("%1.0f", n)), vjust = 1) +
+  scale_fill_gradient(low = "white", high = "green") +
+  theme_bw() + theme(legend.position = "none") +
+  labs(x = "True Label", y = "Predicted Label")
+```
+
+\pagebreak
+
+# Methodology  
+
+## Other Work  
+
+BERT [see _\autoref{fig:bert_by_task_fig}_ from @devlin2018bert]
+
+```{r bert_by_task_fig, echo = FALSE, fig.height = 4, fig.width = 4, fig.align="center", fig.cap="\\label{fig:bert_by_task}BERT by Task (Source: @devlin2018bert)"}
+knitr::include_graphics(path = "images/bert_bytask.png")
+```
+
+\pagebreak
+
+## Ours  
+
+# Results  
+
+# Conclusion  
+
+## Discussion  
+
+# Limitations  
+
+## Error Analysis  
+
+## Further Work
+
+# References  
