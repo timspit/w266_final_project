@@ -105,6 +105,22 @@ knitr::include_graphics(path = "images/bert_bytask.png")
 
 # Results  
 
+```{r f_micro_macro, echo = FALSE}
+
+measure_levels = c("F-micro", "F-macro", "Atheism", "Climate", "Feminism", "Hillary", "Abortion")
+
+f_data = data.frame("measure" = c("F-micro", "F-macro", "Atheism", "Climate", "Feminism", "Hillary", "Abortion") %>% 
+                      factor(levels = measure_levels)
+                    , "our_model" = c(68.4107211,	59.95842361,	68.88470749,	49.50278923,	53.12994915,	64.32539683,	63.94927536)
+                    , "majority_classifer" = c(65.22,	40.092,	42.11,	42.12,	39.1,	36.83,	40.3)
+                    ) %>% 
+  gather(key = "model", value = "value", -measure)
+
+ggplot(data = f_data) + 
+  geom_bar(aes(x = measure, y = value, fill = model), stat = "identity", position=position_dodge()) 
+# TO DO - color aggregate F scores differently 
+```
+
 # Conclusion  
 
 ## Discussion  
