@@ -21,6 +21,7 @@ bibliography: bibliography.bib
 ```{r packages, include = FALSE}
 library(tidyverse)
 library(gridExtra)
+library(htmltools)
 ```
 
 # Introduction
@@ -41,7 +42,7 @@ More text
 
 SemEval 2016 Task 6 [see @mohammad-etal-2016-semeval]
 
-```{r confusion_matrix, echo = FALSE, fig.height = 4, fig.width = 8, fig.align="center", fig.cap="\\label{fig:confusion_matrix}Confusion Matrix"}
+```{r confusion_matrix, echo = FALSE, fig.height = 8, fig.width = 8, fig.align="center", fig.cap="\\label{fig:confusion_matrix}Confusion Matrix"}
 
 label_levels = c("Against", "None", "Favor")
 topic_name = "abort"
@@ -97,7 +98,7 @@ metrics = function(y_true, y_pred){
   classification_report = data.frame("Class" = label_levels
                                     , "Precision" = round(precision * 100, 2)
                                     , "Recall" = round(recall * 100, 2)
-                                    , "F1-Score" = round(f1 * 100, 2))
+                                    , "F1 Score" = round(f1 * 100, 2))
   f1_macro = mean(f1)
   f1_macro_custom = mean(f1[c(1,3)])
   
@@ -105,6 +106,7 @@ metrics = function(y_true, y_pred){
   metric_list$confusion_matrix = confusion_matrix
   metric_list$classification_report = classification_report
   metric_list$f1_macro = f1_macro
+  metric_list$f1_macro_custom = f1_macro_custom
   
   return(metric_list)
 }
@@ -116,7 +118,20 @@ hil_metrics = metrics(y_true = hil$true_label_f, y_pred = hil$predicted_label_f)
 fem_metrics = metrics(y_true = fem$true_label_f, y_pred = fem$predicted_label_f)
 all_topics_metrics = metrics(y_true = all_topics$true_label_f, y_pred = all_topics$predicted_label_f)
 
+# F stats
+f_topics = c(atheism_metrics$f1_macro_custom
+             , clim_metrics$f1_macro_custom
+             , fem_metrics$f1_macro_custom
+             , hil_metrics$f1_macro_custom
+             , abort_metrics$f1_macro_custom)
+f_summary = c(all_topics_metrics$f1_macro_custom
+              , mean(f_topics)
+              , f_topics)
+f_summary = round(f_summary * 100, 2)
+names(f_summary) = c("F-micro", "F-macro"
+                     , "Atheism", "Climate Change", "Feminism", "Hillary Clinton", "Abortion")
 
+# Confusion Plot
 confusion_plot = ggplot(data =  all_topics %>% group_by(true_label_f, predicted_label_f) %>% summarise(n = n())
        , mapping = aes(x = true_label_f, y = predicted_label_f)) +
   geom_tile(aes(fill = n), colour = "white") +
@@ -125,11 +140,12 @@ confusion_plot = ggplot(data =  all_topics %>% group_by(true_label_f, predicted_
   theme_bw() + theme(legend.position = "none") +
   labs(x = "True Label", y = "Predicted Label") + 
   scale_y_discrete(limits = rev(label_levels)) +
-  scale_x_discrete(limits = rev(label_levels))
+  scale_x_discrete(limits = rev(label_levels)) +
+  labs(title = "All Topics")
 
-grid.arrange(confusion_plot
-             , tableGrob(all_topics_metrics$classification_report %>% select(-Class))
-             , nrow = 1)
+grid.arrange(confusion_plot, tableGrob(all_topics_metrics$classification_report %>% select(-Class))
+             , tableGrob(data.frame("F1 Score" = f_summary))
+             , nrow = 2)
 ```
 
 \pagebreak
@@ -156,13 +172,21 @@ measure_levels = c("F-micro", "F-macro", "Atheism", "Climate", "Feminism", "Hill
 
 f_data = data.frame("measure" = c("F-micro", "F-macro", "Atheism", "Climate", "Feminism", "Hillary", "Abortion") %>% 
                       factor(levels = measure_levels)
-                    , "our_model" = c(68.4107211,	59.95842361,	68.88470749,	49.50278923,	53.12994915,	64.32539683,	63.94927536)
+                    , "our_model" = f_summary
                     , "majority_classifer" = c(65.22,	40.092,	42.11,	42.12,	39.1,	36.83,	40.3)
                     ) %>% 
-  gather(key = "model", value = "value", -measure)
+  gather(key = "model", value = "value", -measure) %>%
+  mutate(custom_color = c(rep(1, 2), rep(3, 5)
+                          , rep(2, 2), rep(4, 5)) %>% factor()) %>%
+  arrange(custom_color)
 
 ggplot(data = f_data) + 
-  geom_bar(aes(x = measure, y = value, group = model), stat = "identity", position=position_dodge()) 
+  geom_bar(aes(x = measure, y = value, fill = custom_color, group = model), colour = "black", stat = "identity", position = "dodge") +
+  scale_fill_manual(name = "Model", labels = c("Our Model - Aggregate", "Majority Classifier - Aggregate"
+                                               , "Our Model - by Topic", "Majority Classifier - by Topic"
+                                               )
+                    , values = c("blue", "red", "cornflowerblue", "coral")) +
+  labs(x = "Topic/Measure", y = "Score")
 # TO DO - color aggregate F scores differently 
 ```
 
@@ -173,6 +197,26 @@ ggplot(data = f_data) +
 # Limitations  
 
 ## Error Analysis  
+
+```{r error_analysis}
+
+all_topics_errors = all_topics %>%
+  filter(predicted_label != true_label) %>%
+  select(obs_num, topic, tweet, predicted_label_f, true_label_f)
+
+write.csv(all_topics_errors, file = "./final_outputs/all_topics_errors.csv")
+
+### Abortion
+## Potential negation? 
+# #pregnancyforall seems like a pro-choice tag but the "I have a right/power of choice" rhetoric is pro-choice
+print(all_topics_errors %>% filter(obs_num == 6 & topic == "abort") %>% select(tweet) %>% as.character())
+# There is no way to tall from the existing tweet
+print(all_topics_errors %>% filter(obs_num == 10 & topic == "abort") %>% select(tweet) %>% as.character())
+
+## Just wrong true label
+# There is really no ambiguity here - this person is pro-abortion, should be FAVOR, labeled as AGAINST
+print(all_topics_errors %>% filter(obs_num == 13 & topic == "abort") %>% select(tweet) %>% as.character())
+```
 
 ## Further Work
 
