@@ -42,7 +42,7 @@ import_topic = function(topic_name){
   names(pred_data) = c("obs_num", "predicted_label")
   names(true_data) = c("obs_num", "true_label")
   names(tweet_data) = c("obs_num", "tweet")
-  
+
   merged = tweet_data %>%
     merge(pred_data
           , by = "obs_num"
@@ -72,15 +72,15 @@ all_topics = bind_rows(abort, atheism, clim, hil, fem)
 # CALCULATE METRICS
 metrics = function(y_true, y_pred){
   confusion_matrix = as.matrix(table(Actual = y_true, Predicted = y_pred))
-  n = sum(confusion_matrix) 
-  n_classes = nrow(confusion_matrix) 
+  n = sum(confusion_matrix)
+  n_classes = nrow(confusion_matrix)
   correct_byclass = diag(confusion_matrix)  
-  instances_byclass = apply(confusion_matrix, 1, sum) 
-  predictions_byclass = apply(confusion_matrix, 2, sum) 
-  
-  precision = correct_byclass / predictions_byclass 
-  recall = correct_byclass / instances_byclass 
-  f1 = 2 * precision * recall / (precision + recall) 
+  instances_byclass = apply(confusion_matrix, 1, sum)
+  predictions_byclass = apply(confusion_matrix, 2, sum)
+
+  precision = correct_byclass / predictions_byclass
+  recall = correct_byclass / instances_byclass
+  f1 = 2 * precision * recall / (precision + recall)
 
   classification_report = data.frame("Class" = label_levels
                                     , "Precision" = round(precision * 100, 2)
@@ -88,13 +88,13 @@ metrics = function(y_true, y_pred){
                                     , "F1 Score" = round(f1 * 100, 2))
   f1_macro = mean(f1)
   f1_macro_custom = mean(f1[c(1,3)])
-  
+
   metric_list = list()
   metric_list$confusion_matrix = confusion_matrix
   metric_list$classification_report = classification_report
   metric_list$f1_macro = f1_macro
   metric_list$f1_macro_custom = f1_macro_custom
-  
+
   return(metric_list)
 }
 abort_metrics = metrics(y_true = abort$true_label_f, y_pred = abort$predicted_label_f)
@@ -122,47 +122,47 @@ names(f_summary) = c("F-micro", "F-macro"
 
 ## Background  
 
-Stance Detection is a natural language processing (NLP) task that seeks to automatically determine the "stance" of a statement in relation to a "target". The stance the author of that statement can take is either in favor of the target, against the target, or neutral toward the target. A target can be anything: a proposition, an idea, a person, etc. Since the target against which a statement is evaluated can be agnostic of the content of the statement itself (that is, the statement may not address the target at all), it is possible that it cannot be determined from the statement if the author has a stance toward the target of evaluation.  
+Stance classification is a natural language processing (NLP) task that seeks to automatically determine the "stance" of a statement in relation to a "target". The stance the author of that statement can take is either in favor of the target, against the target, or neutral toward the target. A target can be anything from a proposition to an idea, a person, or a political issue, etc. Since the statement may not address the target at all, it is possible that the author's stance towards the target of evaluation cannot be determined.
 
-Given an abundance of online discourse on social media, automatic stance detection of social media content is an appealing task with widespread potential applications. In particular, Twitter is a social media platform with an incredibly fast-paced environment where many tweets are shared back-and-forth addressing a variety of topics and issues.  
+Stance classification of tweets has applications across many domains: marketing industry efforts to measure public opinions on products, political campaign attempts to measure public views on candidates’ policies, and efforts by Twitter to identify bad actors (i.e., “trolls”). While there has been significant research in stance classification with respect to debates and online forums, Twitter poses a new challenge as many “tweeters” represent their stance towards a target implicitly and often use figurative language, shorthand, acronyms, or hashtags. Given an abundance of online discourse on social media, automatic stance detection of social media content is an appealing task with widespread potential applications. In particular, Twitter is a social media platform with an incredibly fast-paced environment where many tweets are shared back-and-forth addressing a variety of topics and issues.  
 
 ## Objective  
 
-The objective of this paper is to explore new methodologies for detecting stance of tweets and attempt to design a classification model that outperforms existing models. 
+The objective of this paper is to explore new methodologies for detecting stance of tweets and attempt to design a classification model that outperforms existing models.
 
 # Data, Task, & Evaluation  
 
-We relied on an existing, pre-labeled dataset in order to leverage data that has been analyzed by competitor models against which we can compare our results. Specifically, we used a dataset of tweets. @mohammad-etal-2016-dataset This dataset was originally compiled for the International Workshop on Semantic Evaluation (SemEval-2016) where it was used in an evaluation exercise (task 6). _@mohammad-etal-2016-semeval _  
+We relied on an existing, pre-labeled Twitter dataset that has been analyzed by competitor models against which we can compare our results (@mohammad-etal-2016-dataset). This dataset was originally compiled for the International Workshop on Semantic Evaluation (SemEval-2016) where it was used in an evaluation exercise, Task 6 (_@mohammad-etal-2016-semeval _).
 
-This dataset consists of roughly 5,000 tweet-target pairs annotated for both stance and sentiment. The targets may or may not be referred to in the tweets. While sentiment is shown to be beneficial for stance classification, it was not available to competitors at SemEval and pre-labeled sentiment would not be available in a production environment and is therefore ignored for this classification model. _@sobhani-etal-2016-detecting _  
+The dataset consists of approximately 5,000 tweet-target pairs annotated for both stance and sentiment. The targets may or may not be referred to in the tweets. While sentiment is shown to be beneficial for stance classification, it was not available to competitors at the SemEval-2016 conference. Given this in combination with the fact that pre-labeled sentiment would not be available in a production environment, the sentiment labels were ignored for our classification model (_@sobhani-etal-2016-detecting _).
 
-The process for collecting and annotating these tweets is detailed in _@mohammad-etal-2016-dataset _. The authors queried Twitter for topic-specific hashtags to collect a full corpus of tweets related to the intended targets. These targets include:  
+The process for collecting and annotating these tweets is detailed in _@mohammad-etal-2016-dataset _. The authors queried Twitter for topic-specific hashtags in an effort to collect a full corpus of tweets related to the intended targets. These targets include:  
 
-| Target | Favor | Against | 
+| Target | Favor | Against |
 | :---- | :--: | :--: |
 | **Atheism** | _#NoMoreReligions_ | _#GodsWill_ |
-| **Climate Change is a Real Concern** | - | _#GlobalWarmingHoax_ | 
-| **Feminist Movement** | _#INeedFeminismBecause_ | _#FeminismIsAwful_ | 
-| **Hillary Clinton** | _#GoHillary_ | _#WhyIAmNotVotingForHillary_ | 
-| **Legalization of Abortion** | _#ProChoice_ | _#PrayToEndAbortion_ | 
+| **Climate Change is a Real Concern** | - | _#GlobalWarmingHoax_ |
+| **Feminist Movement** | _#INeedFeminismBecause_ | _#FeminismIsAwful_ |
+| **Hillary Clinton** | _#GoHillary_ | _#WhyIAmNotVotingForHillary_ |
+| **Legalization of Abortion** | _#ProChoice_ | _#PrayToEndAbortion_ |
 
 Table: Target Categoris with Example Hastags  
 
-After extracting tweets containing the query hashtags, the authors only kept tweets with that hashtag at the end and then removed those hashtags from the tweet text to exclude obvious clues for the classification task. Note that while this is a necessary step for the NLP task, removal of the query hashtag may actually change the stance of the tweet (e.g. if the hashtag was a negation of the preceding text).  
+After extracting the results, the authors retained only tweets with the query hashtag at the end.  The query hashtag was then removed in order to exclude obvious clues for the classification task. Note that while this is a necessary step for the NLP task, removal of the query hashtag may actually change the stance of the tweet (e.g. if the hashtag was a negation of the preceding text).  
 
-Tweets were then annotated for stance using CrowdFlower (http://www.CrowdFlower.com)[http://www.crowdflower.com], a website for crowd-sourced data annotation, where each tweet was annotated by at least eight reviewers. The raw inter-annotater agreement was 73.1%, however a cutoff was applied where only tweets with >60% agreement were used, which decreased the corpus and increased the average agreement to 81.85%. Lastly, these tweets were split into train and test sets chronologically. (See the **Limitations** section for more on how this process may affect the classifcation task)  
+Tweets were then annotated for stance using CrowdFlower (http://www.CrowdFlower.com)[http://www.crowdflower.com], a website for crowd-sourced data annotation, where each tweet was annotated by at least eight reviewers. The raw inter-annotater agreement was 73.1%, however a cutoff was applied where only tweets with greater than 60% agreement were retained, increasing the average agreement to 81.85%. Lastly, the resulting tweets were split into train and test sets chronologically. (See the **Limitations** section for more on how this process may affect the classifcation task).
 
-Model results were evaluated using a modified F1 score which took the macro-average of the "favor" and "against" stance category F1-scores. This method was chosen to treat the "none" stance as a negative class, though it still will affect scores. _[NEED Information Retrieval Source]_ For evaluation of the models across targets, the micro-average of F-scores across all tweets, regardless of the topic, was evaluated (referred to as **F-microT**). This was the score used for the competition metric. Alternatively, the macro-average of the F1-scores achieved for each topic can also be calculated (referred to as **F-macroT**). _@mohammad-etal-2016-semeval _
+Models were trained independently for each target. Performance was evaluated for each target using a modified F1 score, which took the macro-average of the "favor" and "against" class F1 scores only. This method was chosen to treat the "none" stance as a class that is not of interest (or negative class), though it still will affect the macro-average F1 scores. _[NEED Information Retrieval Source]_ For evaluation of model performance across all targets, the micro-average of F1 scores was evaluated (referred to as **F-microT**). This was the score used as the official competition metric. Alternatively, the macro-average of the F1 scores can also be calculated (referred to as **F-macroT**) by averaging the modified F1 scores acheived for each target (_@mohammad-etal-2016-semeval _).
 
 # Related Work  
 
-The baseline model for the SemEval-2016 Task 6 competition was a linear-kernel Support Vector Machine (SVM) classifier _[@mohammad-etal-2016-semeval]_, with 3 different specifications and features sets used. The _unigrams_ model created five SVM classifiers (one per target) trained using unigram features, the _N-grams_ [_best performer_] model created five SVM classifiers (one per target) trained using word n-grams of 1-, 2-, and 3-gram length and character n-grams of 2-, 3-, 4-, and 5-gram lengt, and the _N-grams-combined_ model created one SVM classifier trained on the combined data for all targets, using the say n-gram features as described above.  
+The baseline model for the SemEval-2016 Task 6 competition was a linear-kernel Support Vector Machine (SVM) classifier _[@mohammad-etal-2016-semeval]_, with 3 different specifications and features sets used. The _unigrams_ model created five SVM classifiers (one per target) trained using unigram features, the _N-grams_ [_best performer_] model created five SVM classifiers (one per target) trained using word n-grams of 1-, 2-, and 3-gram length and character n-grams of 2-, 3-, 4-, and 5-gram length, and the _N-grams-combined_ model created one SVM classifier trained on the combined data for all targets, using the say n-gram features as described above.  
 
-SVM was chosen as it is effective on text categorization tasks and robust on large feature spaces. _@sobhani-etal-2016-detecting _ expanded on this n-gram model to also include SVM models trained using word embedding and sentiment lexicon features. Note that the word embeddings in this model were trained using the "full corpus" of nearly 2 million tweets extracted by the authors that compiled the original dataset using the query hashtags. These tweets were not provided with the data, therefore the strength of this model is artificially inflated by the context the word embeddings were able to capture by virtue of being trained with exclusive data that aligns precisely with the train and test labeled data
-  
-Several of the competing teams within the SemEval-2016 Task 6 competition took a 'neural network' approach to the challenge. _@zarrella-marsh-2016-mitre _, the winner of the competition, leveraged transfer learning to perform the classification task.  The team sampled 200 million + relevant Tweets to create an auxiliary 'hashtag prediction task', which was used as a projection into a LSTM-RNN layer. _@wei-etal-2016-pkudblab _ and _@vijayaraghavan-etal-2016-deepstance _ both implemented convolutional neural networks, however, did not achieve the same level of success as _Zarella et. al_.  
+SVM was chosen as a baseline since it is effective on text categorization tasks and robust on large feature spaces. _@sobhani-etal-2016-detecting _ expanded on the n-gram model to also include word embeddings and sentiment lexicon features. Note that the word embeddings in this model were trained using the "full corpus" of nearly 2 million tweets extracted by the authors that compiled the original dataset using query hashtags. These tweets were not provided with the data, therefore the strength of this model may be artificially inflated through the context these word embeddings were able to capture by virtue of being trained with exclusive tweets that align precisely with the task at hand.
 
-There were also a handful of teams that took a 'featured-based' modelling approach.  _@tutek-etal-2016-takelab _ used 'lexical features' such as n-grams, average word length, and number of hashtags as inputs to an ensemble classifier rooted inlogistic regression, gradient boosting machines, random forests, and support vector machines.  Similarly, _@bohler-etal-2016-idi _ used a voting classifier that took input from two multinomial Na�ve Bayes classifiers, one trained on word bi-grams while the other was trained on character tri-grams, and a logistic regression classifier trained on GloVe vectors.  _Bohler et. al_ also experimented with various additional features such as the presence or absence of negation and length of tweets.   
+Several of the competing teams within the SemEval-2016 Task 6 competition took a 'neural network' approach to the challenge. _@zarrella-marsh-2016-mitre _, the winner of the competition, leveraged transfer learning to perform the classification task.  The team sampled 200 million + relevant tweets to create an auxiliary 'hashtag prediction task', which was used as a projection into a Long Short Term Memory (LSTM) - Recurrent Neural Net (RNN) layer. _@wei-etal-2016-pkudblab _ and _@vijayaraghavan-etal-2016-deepstance _ both implemented convolutional neural networks, however, did not achieve the same level of success as _Zarella et. al_.  
+
+There were also a handful of teams that took a 'featured-based' modelling approach.  _@tutek-etal-2016-takelab _ used 'lexical features' such as n-grams, average word length, and number of hashtags as inputs to an ensemble classifier rooted inlogistic regression, gradient boosting machines, random forests, and support vector machines.  Similarly, _@bohler-etal-2016-idi _ used a voting classifier that took input from two multinomial Na?ve Bayes classifiers, one trained on word bi-grams while the other was trained on character tri-grams, and a logistic regression classifier trained on GloVe vectors.  _Bohler et. al_ also experimented with various additional features such as the presence or absence of negation and length of tweets.   
 
 Since the time the conference has ended, there have been two additional contributions to this task.  Both _@sun-etal-2018-stance _ and _@ijcai2017-557 _ leveraged neural attention networks to perform stance classification, with each team achieving higher final F1 scores than the winner of the initial competition.  Although several of the competing teams found effective models, none were able to achieve higher final F1 scores than the SVM baseline _@mohammad-etal-2016-semeval _.  This also holds for _Sun_ and _Du_'s work after the conference ended. We will present our model's results in the context of performance against all SemEval-2016 Task 6 competing teams, _@mohammad-etal-2016-semeval _'s baseline, and the succeeding work by _Sun_ and _Du_.  
 
@@ -179,7 +179,7 @@ grid.raster(bert_img)
 
 # Model  
 
-Next, we describe the model we implemented to approach the SemEval-2016 Task 6 competition. After reviewing the work performed by contributing members of the competition, we hypothesized that a neural network which effectively captures the context of the limited characters and words contained in a tweet would perform well in classifying stance from Twitter data. Words contained in tweets cannot always be taken at face value. Hashtags, sarcasm, irony, and other forms of rhetoric are frequently found in tweets, and we would want our model to effectively capture these nuances since it contains valuable information about the author's stance. 
+Next, we describe the model we implemented to approach the SemEval-2016 Task 6 competition. After reviewing the work performed by contributing members of the competition, we hypothesized that a neural network which effectively captures the context of the limited characters and words contained in a tweet would perform well in classifying stance from Twitter data. Words contained in tweets cannot always be taken at face value. Hashtags, sarcasm, irony, and other forms of rhetoric are frequently found in tweets, and we would want our model to effectively capture these nuances since it contains valuable information about the author's stance.
 
 ## Infrastructure  
 
@@ -197,7 +197,7 @@ As previously mentioned, we expect a model that has the capacity to capture the 
 Since independent models were trained for each of the five topics, we tuned the model's hyperparameters on a single topic, Hillary Clinton, and then applied the results to the remaining topics. Hillary Clinton was selected because it contained the most consistent balance of classes within both the training and test sets. In addition, its majority class was the 'AGAINST' stance label, which was consistent with all other topics, excluding Climate Change.  Our overall approach for hyperparameter tuning was trial and error. \autoref{fig:hyperparam_table} below details the hyperparameters we focused on as well as the final value implemented in our models.  
 
 | Hyperparameter | Final Value |
-| :------------- | :---------- | 
+| :------------- | :---------- |
 | Learning Rate | 0.001 |
 | Epochs | 20 |
 | Dropout Rate | 50% |
@@ -227,8 +227,8 @@ Table: \label{fig:classreport_table} Classification Report
 
 | Topic | F1 Score | SemEval-2016 Rank | Overall Rank |
 | :--------- | :------: | :---: | :---: |
-| Overall Macro F1 | 60.88 | 1 | 2 |
-| Overall Micro F1 | 69.72 | 1 | 3 |
+| Overall F-macroT | 60.88 | 1 | 2 |
+| Overall F-microT | 69.72 | 1 | 3 |
 | Atheism | 69.66 | 1 | 2 |
 | Hillary Clinton | 64.48 | 2 | 3 |
 | Abortion | 64.06 | 1 | 3 |
@@ -237,7 +237,7 @@ Table: \label{fig:classreport_table} Classification Report
 
 Table: \label{fig:f1rank_table} Final F1 Scores with Ranks  
 
-| Team | Overall (F-micro) | Overall (F-macro) | Atheism | Climate | Feminism | Hillary | Abortion |
+| Team | Overall (F-microT) | Overall (F-macroT) | Atheism | Climate | Feminism | Hillary | Abortion |
 | :--------------- | :-----: | :------: | :---: | :---: | :---: | :---: | :---: |
 | Muhammed et. al         | **70.32** | 59.01 | 69.19 | 43.80 | 58.72 | 61.74 | **66.91** |
 | Sun                     | 69.79 | **61.00** | **70.53** | 49.56 | 57.50 | 61.84 | 66.16 |
@@ -257,11 +257,11 @@ The results in the above tables demonstrate the strength of our model.  When com
 ```{r plot_versus_majority, echo = FALSE, fig.height = 4, fig.width = 4, fig.align="center", fig.cap="\\label{fig:versus_majority}Results versus Majority Classifier"}
 measure_levels = c("F-micro", "F-macro", "Atheism", "Climate", "Feminism", "Hillary", "Abortion")
 
-f_data = data.frame("measure" = c("F-microT", "F-macroT", "Atheism", "Climate", "Feminism", "Hillary", "Abortion") %>% 
+f_data = data.frame("measure" = c("F-microT", "F-macroT", "Atheism", "Climate", "Feminism", "Hillary", "Abortion") %>%
                       factor(levels = measure_levels)
                     , "our_model" = f_summary
                     , "majority_classifer" = c(65.22,	40.092,	42.11,	42.12,	39.1,	36.83,	40.3)
-                    ) %>% 
+                    ) %>%
   gather(key = "model", value = "value", -measure) %>%
   mutate(custom_color = c(rep(1, 2), rep(3, 5)
                           , rep(2, 2), rep(4, 5)) %>% factor()) %>%
@@ -269,31 +269,34 @@ f_data = data.frame("measure" = c("F-microT", "F-macroT", "Atheism", "Climate", 
 
 paired_palette = brewer.pal(n = 4, name = "Paired")
 
-ggplot(data = f_data) + 
+ggplot(data = f_data) +
   geom_bar(aes(x = measure, y = value, fill = custom_color), colour = "black", stat = "identity", position = "dodge") +
   scale_fill_manual(name = "Model"
                     , breaks = c(1, 2)
                     , labels = c("Dessouky/Spittle", "Majority Classifier")
                     , values = c(paired_palette[2], paired_palette[4], paired_palette[1], paired_palette[3])) +
-  labs(x = "Topic/Measure", y = "Score") + 
+  labs(x = "Topic/Measure", y = "Score") +
   theme_bw() + theme(axis.text.x = element_text(angle = 45, hjust = 1)
                      , legend.position = "bottom")
 ```
 
 \pagebreak  
 
-# Conclusion  
-
-_TBD_ Did we identify any state-of-the-art methodologies? No  
-What did we learn about Stance Detection? Messy  
-
 # Limitations  
 
-Small amount of labeled data available  
-- High level of disagreement among encoders = expected ML classifier error  
-- Removed key hashtags from training/test data (would be incredibly valuable in the real world)  
-- Reproducibility - re-running the same model produces slightly different results  
-- Given such a small amount of data, training on separate models can be fit to 100% accuracy and produce different weights and therefore different results on test set  
+While we were able to build an effective model for stance detection, we came across a number of apparent limitations. First, as mentioned within the **Data, Task, and Evaluation** section, the key query hashtags were removed from the training and test data, which would have been incredibly valuable in determining stance in the real world.  Next, the stance labels were highly skewed. _Table 4_ below shows the distribution of the labels for each target. While we allocated higher weights to the minority classes during the training process, our model still proved to be much more effective in predicting the majority class versus the minority classes.
+
+| Target | # total | # train | favor (% of train) | none (% of train) | against (% of train) | # test | favor (% of test) | none (% of test) | against (% of test
+| :--------------- | :-----: | :-----: | :-----: | :-----: | :-----: | :-----: | :-----: | :-----: | :-----: |
+| Atheism | 733 | 513 | 17.9 | 59.3 | 22.8 | 220 | 14.5 | 72.7 | 12.7 |
+| Climate Change | 564 | 395 | 53.7 | 3.8 | 42.5 | 169 | 72.8 | 6.5 | 20.7 |
+| Feminist Movement | 949 | 664 | 31.6 | 49.4 | 19.0 | 285 | 20.4 | 64.2 | 15.4 |
+| Hillary Clinton | 984 | 689 | 17.1 | 57.0 | 25.8 | 295 | 15.3 | 58.3 | 26.4 |
+| Legalization of Abortion | 933 | 653 | 18.5 | 54.4 | 27.1 | 280 | 16.4 | 57.3 | 18.4 |
+
+Table: Data distribution  
+
+In addition, there was a high level of disagreement amongst the label 'encoders', which can be translated to a higher expected error rate in our model. We can expect our model to struggle classifying the stance of tweets in which humans do not consistently agree fall under a specific stance label. Further, the total number of tweets in our dataset was low for a NLP problem. We felt that this may have affected the reproducibility of our model results.  Re-running the same model on the identical training and test sets would produce slightly different results, despite fitting the training data to near 100% accuracy.
 
 ## Error Analysis  
 
@@ -307,7 +310,7 @@ ggplot(data =  all_topics %>% group_by(true_label_f, predicted_label_f) %>% summ
   geom_text(aes(label = sprintf("%1.0f", n)), vjust = 1) +
   scale_fill_gradient(low = "white", high = "green4") +
   theme_bw() + theme(legend.position = "none") +
-  labs(x = "True Label", y = "Predicted Label") + 
+  labs(x = "True Label", y = "Predicted Label") +
   scale_y_discrete(limits = rev(label_levels)) +
   scale_x_discrete(limits = rev(label_levels)) +
   labs(caption = "Note: All Topics")
@@ -326,7 +329,7 @@ all_topics_errors = all_topics %>%
 ##########################################################################################
 all_topics_errors_reviewed = read.xlsx("./final_outputs/all_topics_errors_reviewed.xlsx", sheet = "all_topics_errors")
 
-atheism_errors_annotated = all_topics_errors_reviewed %>% 
+atheism_errors_annotated = all_topics_errors_reviewed %>%
   filter(topic == "atheism")
 
 atheism_errors_grouped = atheism_errors_annotated %>%
@@ -337,7 +340,7 @@ atheism_errors_grouped = atheism_errors_annotated %>%
 ```{r error_analysis_plot, echo = FALSE, fig.height = 4, fig.width = 4, fig.align="center", fig.cap="\\label{fig:error_analysis}Atheism Error Analysis Summary of Issues"}
 ggplot(data = atheism_errors_grouped
        , aes(x = true_label_f, y = count, fill = issue)) +
-  geom_bar(position = "stack", stat = "identity", color = "black") + 
+  geom_bar(position = "stack", stat = "identity", color = "black") +
   labs(x = "True Label", y = "Count") +
   scale_fill_discrete(name = "Issue") +
   theme_bw() + theme(legend.position = "bottom")
@@ -358,8 +361,14 @@ Others has common challenges with the tweet text that may have caused some of th
 
 This apparent mis-labeling obviously causes some concern about the ability to train a model consistently that performs well on unseen data. However, there were additionally instances where our model made obvious mistakes. There were no systematic issues and it is difficult to determine what made these mis-classified tweets appear to have another stance. [**Not really sure what else to say here - reviewing errors not very enlightening**] It is notable that our model made consistent errors across true label categories, however the annotaters made errors exlusively in the against stance. The against stance constitutees 73% of test set data observations for the atheism target, indicating that some amount of the errors may be attributable to fatigue, perhaps, or some factor that causes repeated annotation to lean toward the majority class.  
 
-## Further Work  
+# Conclusion and Future Work
 
-[_Ideas on gaps in our approach and/or logical next steps_]
+In this paper, we implement BERT for contextualized word embeddings in a neural network model used to effectively detect stance.  We propose a novel model architecture for use on the SemEval-2016 Task 6 dataset.  While we did not beat the top score across all contributors to this task, we obtained results in line with the current state-of-the-art models. We achieved a F-microT of 69.72 and a F-macroT of 60.88, which ranked 3rd and 2nd, respectively, amongst all contributors to the task.  This demonstrates the potential BERT has as a method of obtaining contextualized word embeddings for the purpose of stance classification.
+
+Going forward, there are a couple additional areas in which we feel there is room for improvement.  First, we would like to explore the use of a bidirectional LSTM layer in lieu of the current LSTM layer implemented in our model.  In addition, we would like to investigate the benefits of using BERT Large in the embedding layer in place of BERT Base, which was utilized in our model.
+
+Another potential area for improvement would be training BERT from scratch rather than leveraging the pre-trained weights and fine-tuning with the SemEval-2016 Task 6 data.  If a large corpus could be obtained, similar to that described in the **Data, Task, and Evaluation** section above, training the Bert from scratch would likely result in a significant boost in F1 score.
+
+Lastly, given the small data set size and skewness, putting effort into collecting more data to increase sample size and balance out the classes would likely benefit model performance.
 
 # References  
