@@ -142,7 +142,7 @@ atheism_errors_grouped = atheism_errors_annotated %>%
 
 ## Background  
 
-Stance classification is a natural language processing (NLP) task that seeks to automatically determine the "stance" of a statement in relation to a "target". The stance the author of that statement can take is either in **favor** of the target, **against** the target, or **neutral** toward the target. A target can be anything, from a proposition to an idea, a person, a political issue, etc. The stance of any statement can be determined against any target. Since the statement may not address the target at all, it is possible that the author's stance towards the target of evaluation cannot be determined. In certain circumstances where the at-issue target is not addressed directly, the stance of a statement can be determined by inference from association with another target.
+Stance classification is a natural language processing (NLP) task that seeks to automatically determine the "stance" of a statement in relation to a "target". The stance the author of that statement can take is either in **favor** of the target, **against** the target, or **neutral** toward the target. A target can be anything, from a proposition to an idea, a person, a political issue, etc. The stance of any statement can be assessed against any target. However, since the statement may not address the target at all, it is possible that the author's stance towards the target of evaluation cannot be determined. In certain circumstances where the at-issue target is not addressed directly, the stance of a statement can be determined by inference from association with another target.
 
 Given an abundance of online discourse on social media, automatic stance detection of social media content is an appealing task with widespread potential applications. In particular, Twitter is a social media platform with an incredibly fast-paced environment where many tweets are shared back-and-forth addressing a variety of topics and issues. Stance classification of tweets has applications across many domains: marketing industry efforts to measure public opinions on products, political campaign attempts to measure public views on candidates' policies, and efforts by Twitter to identify bad actors (i.e., "trolls"). While there has been significant research in stance classification with respect to debates and online forums, Twitter poses a new challenge as many "tweeters" represent their stance towards a target implicitly and often use figurative language, shorthand, acronyms, or hashtags.   
 
@@ -231,7 +231,7 @@ As mentioned above, we leveraged a batch size of 32 tweets for training.  Adam o
 
 # Results  
 
-Our model's results are summarized in the tables below. _\autoref{fig:f1rank_table}_ shows the final ranking of our model in the context of the competing teams in the SemEval-2016 conference, the baseline SVM models, and the succeeding work by _@sun-etal-2018-stance _ and _@ijcai2017-557 _. _\autoref{fig:f1all_table}_ shows our F1 scores for each topic in comparison to all teams that achieved a high score in at least 1 topic as well as the SVM baseline, _@sun-etal-2018-stance _, and _@ijcai2017-557 _.
+Our model's results are summarized in the tables below. _\autoref{fig:f1rank_table}_ shows the final ranking of our model in the context of the competing teams in the SemEval-2016 conference, the updated baseline SVM model, and the succeeding work by _@sun-etal-2018-stance _ and _@ijcai2017-557 _. _\autoref{fig:f1all_table}_ shows our F1 scores for each topic in comparison to all teams that achieved a high score in at least 1 topic as well as the updated SVM baseline, _@sun-etal-2018-stance _, and _@ijcai2017-557 _.
 
 | Topic | F1 Score | SemEval-2016 Rank | Overall Rank |
 | :--------- | :------: | :---: | :---: |
@@ -248,9 +248,9 @@ Table: \label{fig:f1rank_table} Final F1 Scores with Ranks
 | Team | F-microT (All Targets) | F-macroT (All Targets) | Atheism | Climate | Feminism | Hillary | Abortion |
 | :--------------- | :---------: | :---------: | :---: | :---: | :---: | :---: | :---: |
 | Sobhani et. al         | **70.32** | 59.01 | 69.19 | 43.80 | 58.72 | 61.74 | **66.91** |
-| Sun                     | 69.79 | **61.00** | **70.53** | 49.56 | 57.50 | 61.84 | 66.16 |
+| Sun et. al             | 69.79 | **61.00** | **70.53** | 49.56 | 57.50 | 61.84 | 66.16 |
 | **Dessouky & Spittle**  | 69.72 | 60.88 | 69.66 | 48.47 | 57.76 | 64.48 | 64.06 |
-| Du                      | 68.79 | 59.56 | 59.77 | **53.59** | 55.77 | 65.38 | 63.72 |
+| Du et. al               | 68.79 | 59.56 | 59.77 | **53.59** | 55.77 | 65.38 | 63.72 |
 | MITRE                   | 67.82 | 56.03 | 61.47 | 41.63 | **62.09** | 57.67 | 57.28 |
 | pkudblab                | 67.33 | 58.57 | 63.34 | 52.69 | 51.33 | 64.41 | 61.09 |
 | TakeLab                 | 66.83 | 58.00 | 67.25 | 41.25 | 53.01 | **67.12** | 61.38 |
@@ -260,7 +260,7 @@ Table: \label{fig:f1rank_table} Final F1 Scores with Ranks
 
 Table: \label{fig:f1all_table} F1 Scores for all state-of-the-art models  
 
-The results in the above tables demonstrate the strength of our model.  When comparing against teams participating in the SemEval2016 competition (see _Table 3_, column _SemEval-2016 Rank_), we achieved the highest micro F1 and macro F1 scores across all targets. We also achieved the top F1 score in the Atheism and Abortion targets, while finishing second in Hillary Clinton and Feminism, and third in Climate Change. When including _@sun-etal-2018-stance _ and _@ijcai2017-557 _'s post-conference contributions as well as the SVM baseline, we do not have any top scores (see _Table 3_, column _Overall Rank_).  However, we still achieved the second highest macro F1 score across all targets, trailing _Sun et. al_ by only 0.12 (see _Table 4_). We also achieved the third highest micro F1 score, behind _@sun-etal-2018-stance _ and _@sobhani-etal-2016-detecting _.  Note that micro F1 score tends to be higher for models that perform better on the majority class, while macro F1 score tends to be higher for models that perform well on all classes. This can be seen in the comparison between the majority classifier's micro and macro F1 scores.  The majority classifier scores a 65.22 on micro F1 score, but only 40.09 on macro F1.  Our model achieved universally higher results than the majority classifier. See _\autoref{fig:versus_majority}_ within the *Appendix*.  
+The results in the above tables demonstrate the strength of our model.  When comparing against teams participating in the SemEval-2016 competition (see _Table 3_, column _SemEval-2016 Rank_), we achieved the highest F-microT and F-macroT scores across all targets. We also achieved the top F1 score in the Atheism and Abortion targets, while finishing second in Hillary Clinton and Feminism, and third in Climate Change. When including _@sun-etal-2018-stance _ and _@ijcai2017-557 _'s post-conference contributions as well as the updated SVM baseline, we do not have any top scores (see _Table 3_, column _Overall Rank_).  However, we still achieved the second highest F-macroT score across all targets, trailing _Sun et. al_ by only 0.12 (see _Table 4_). We also achieved the third highest F-microT score, behind _@sun-etal-2018-stance _ and _@sobhani-etal-2016-detecting _.  Note that F-microT score tends to be higher for models that perform better on the majority class, while F-macroT score tends to be higher for models that perform well on all classes. This can be seen in the comparison between the majority classifier's F-microT and F-macroT scores.  The majority classifier scores a 65.22 on F-microT, but only 40.09 on F-macroT.  Our model achieved universally higher results than the majority classifier. See _\autoref{fig:versus_majority}_ within the *Appendix*.  
 
 # Limitations  
 
@@ -280,9 +280,9 @@ In addition, there was a high level of disagreement amongst the label 'encoders'
 
 ## Error Analysis  
 
-_\autoref{fig:confusion_matrix}_ in the *Appendix* presents a confusion matrix detailing the distribution of predicted versus true labels for our model. Given that the 'Against' stance label is the majority class, it is no surprise that the largest contributors to errors are false-negative 'Against' observations.  
+_\autoref{fig:confusion_matrix}_ in the *Appendix* presents a confusion matrix detailing the distribution of predicted versus true labels for our model. Given that the 'AGAINST' stance label is the majority class, it is no surprise that the largest contributors to errors are false-negative 'AGAINST' observations.  
 
-Errors for target **Atheism** were manually to better understand the nature of mis-classified tweets. Errors were categorized according to whether the purported true label or the predicted label from our model appeared to be correct (or if neither appeared correct). \autoref{fig:error_analysis} in the *Appendix* shows the results of this error review and annotation.   
+Errors for target **Atheism** were manually reviewed to better understand the nature of mis-classified tweets. Errors were categorized according to whether the purported true label or the predicted label from our model appeared to be correct (or if neither appeared correct). \autoref{fig:error_analysis} in the *Appendix* shows the results of this error review and annotation.   
 
 It was surprising how many tweets appeared to have been assigned the incorrect true label. To be clear, there is a substantial amount of ambiguity in these tweets (as has been mentioned, there was a high degree of disagreement among encoders), but we will detail different types of mis-labeled tweets to highlight where and how we think encoders were mistaken.  
 
@@ -291,17 +291,17 @@ First and foremost, some tweet true labels were unambiguously incorrect. The bel
 > **Topic**: Atheism | **True Label**: Against | **Predicted Label**: Favor | **Correct**: Favor  
 `r atheism_errors_annotated %>% filter(topic == "atheism" & examples == "blatant") %>% select(tweet) %>% str_replace("@", "[AT]")`  
 
-Other true label error examples have common challenges with the tweet text that may have caused some of these errors in annotation. Generally, ambiguous texts suffer from some form of lack of context. _Missing Context_ errors occur when certain tweets reference specific people or things that may be hard to align with the target or require a leap in assumption about connection of target. The below tweet, for example, references "those quotes" which we do not see. Therefore, we cannot make a judgment as to how "showing 'em the quotes" would align with the target.  
+Other true label error examples have common challenges with the tweet text that may have caused some of these errors in annotation. Generally, ambiguous texts suffer from some form of lack of context. _Missing Context_ errors occur when certain tweets reference specific people or things that may be hard to align with the target or require a leap in assumption about connection to the target. The below tweet, for example, references "those quotes" which we do not see. Therefore, we cannot make a judgment as to how "showing 'em the quotes" would align with the target.  
 
 > **Topic**: Atheism | **True Label**: Against | **Predicted Label**: Favor | **Correct**: Favor  
 `r atheism_errors_annotated %>% filter(topic == "atheism" & examples == "missing_context") %>% select(tweet) %>% str_replace("@", "[AT]")`  
 
-Similarly, _Referential_ errors occur when other tweets refernce a target other than the target of interest and an unreasonable leap in assumption is made to come to a conclusion on that author's potential stance on the target. It is notable in the below tweet that the query hashtag, which is not presented, could be the point that makes the author's stance clear. However, without it, it is not reasonable to draw the conclusion that celebrating Independence Day and the constitution exhibits a stance Against Atheism.  
+Similarly, _Referential_ errors occur when other tweets reference a target other than the target of interest and an unreasonable leap in assumption is made to come to a conclusion on that author's potential stance on the target. This is apparent in the below tweet where the initial query hashtag, which is not presented, could be the point that makes the author's stance clear. However, without it, it is not reasonable to draw the conclusion that celebrating Independence Day and the constitution exhibits a stance against Atheism.  
 
 > **Topic**: Atheism | **True Label**: Against | **Predicted Label**: Neither | **Correct**: Neither  
 `r atheism_errors_annotated %>% filter(topic == "atheism" & examples == "referential") %>% select(tweet) %>% str_replace("@", "[AT]")`  
 
-Lastly, a common problem in sentiment analysis is _Sarcsm_. The below two example tweets (which exhibit both mis-labeled data and an error of our model's prediction) are clearly joking/mocking.  
+Lastly, a common problem in sentiment analysis is _Sarcasm_. The below two example tweets (which exhibit both mis-labeled data and an error of our model's prediction) are clearly joking/mocking.  
 
 > **Topic**: Atheism | **True Label**: Against | **Predicted Label**: Favor | **Correct**: Favor  
 `r atheism_errors_annotated %>% filter(topic == "atheism" & examples == "sarcasm" & issue == "True label wrong") %>% select(tweet) %>% str_replace("@", "[AT]")`
@@ -309,7 +309,7 @@ Lastly, a common problem in sentiment analysis is _Sarcsm_. The below two exampl
 > **Topic**: Atheism | **True Label**: Against | **Predicted Label**: Favor | **Correct**: Against  
 `r atheism_errors_annotated %>% filter(topic == "atheism" & examples == "sarcasm" & issue == "Our model wrong") %>% select(tweet) %>% str_replace("@", "[AT]")`  
 
-This apparent mis-labeling obviously causes some concern about the ability to train a model consistently that performs well on unseen data. However, the majority of instances reviewed where our model made obvious mistakes were clearly incorrect predictions. There were no systematic issues. It is notable that our model made consistent errors across true label categories. Conversely, the annotaters made errors almost exclusively in the majority Against stance label. The Against stance constitutees 73% of test set data observations for the Atheism target, indicating that some amount of the errors may be attributable to fatigue, perhaps, or some factor that causes repeated annotation to lean toward the majority class.  
+This apparent mis-labeling obviously causes some concern about the ability to train a model consistently that performs well on unseen data. However, the majority of instances reviewed where our model made obvious mistakes were clearly incorrect predictions. There were no systematic issues. It is notable that our model made consistent errors across true label categories. Conversely, the annotaters made errors almost exclusively in the majority 'AGAINST' stance label. The 'AGAINST' stance constitutes 73% of test set data observations for the Atheism target, indicating that some amount of the errors may be attributable to fatigue, perhaps, or some factor that causes repeated annotation to lean toward the majority class.  
 
 # Conclusion and Future Work
 
