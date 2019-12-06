@@ -184,7 +184,6 @@ bert_img = readPNG("images/bert_bytask.png")
 grid.raster(bert_img)
 ```
 
-
 # Model  
 
 Next, we describe the model we implemented to approach SemEval-2016 Task 6. After reviewing the work performed by contributing members of the competition, we hypothesized that a neural network which effectively captures the context of the limited characters and words contained in a tweet would perform well in classifying stance from Twitter data. Words contained in tweets cannot always be taken at face value. Hashtags, sarcasm, irony, and other forms of rhetoric are frequently found in tweets, and we would want our model to effectively capture these nuances since it contains valuable information about the author's stance.
@@ -193,10 +192,10 @@ Next, we describe the model we implemented to approach SemEval-2016 Task 6. Afte
 
 Given the state-of-the-art performance BERT has seen across many natural language processing tasks, including stance classification ( _@mayfield-black-2019-stance _) and a classification task leveraging Twitter data ( _@ma-unpublished _), we elected to leverage BERT for contextualized word embeddings.  Rather than using the pooled output captured by BERT's '[CLS]' token, our model connects the full sequential output from BERT to a 128-unit LSTM layer.  This infrastructure was motivated by the success of the BERT-LSTM integrated layers in _@ma-unpublished _'s Twitter classification task as well as _Zarrella and Marsh (2016)_'s competition winning model that leveraged an auxiliary 'hashtag prediction task' as a projection into a LSTM-RNN layer.  The LSTM layer output is fed into a densely connected layer consisting of 64 units using 'relu' activation function and He initialization.  The densely connected layer feeds the classification layer which uses 'softmax' activation to predict the probability of each of the three stance labels in our data set: FAVOR/NONE/AGAINST. Dropout is performed at two points: 1) prior to the LSTM layer and 2) prior to the classification layer.  Refer to _\autoref{fig:model_diagram}_ for a diagram of our model infrastructure.  
 
-```{r model_diagram_chunk, echo = FALSE, out.height = 4, out.width = 4, fig.align="center", fig.cap="\\label{fig:model_diagram}Model Diagram"}
-knitr::include_graphics("images/Dessouky_Spittle_Model_Diagram.PNG")
-# bert_img = readPNG("images/Dessouky_Spittle_Model_Diagram.PNG")
-# grid.raster(bert_img)
+```{r model_diagram_chunk, echo = FALSE, fig.height = 6, fig.width = 6, fig.align="center", fig.cap="\\label{fig:model_diagram}Model Diagram"}
+# knitr::include_graphics("images/Dessouky_Spittle_Model_Diagram.PNG")
+bert_img = readPNG("images/Dessouky_Spittle_Model_Diagram.PNG")
+grid.raster(bert_img)
 ```
 
 As previously mentioned, we expect a model that has the capacity to capture the unique rhetoric seen in tweets to perform well in stance classification.  The combined use of BERT with a LSTM layer would provide the infrastructure suitable to capture the nuances of hashtags, sarcasm, and irony frequently used on Twitter.
@@ -264,7 +263,7 @@ Table: \label{fig:f1all_table} F1 Scores for all state-of-the-art models
 The results in the above tables demonstrate the strength of our model.  When comparing against teams participating in the SemEval2016 competition (see _Table 4_, column _SemEval-2016 Rank_), we achieved the highest overall micro F1 and macro F1 scores. We also achieved the top F1 score in the Atheism and Abortion topics, while finishing second in Hillary Clinton and Feminism, and third in Climate Change. When including _@sun-etal-2018-stance _ and _@ijcai2017-557 _'s post-conference contributions as well as the SVM baseline, we do not have any top scores (see _Table 4_, column _Overall Rank_).  However, we still achieved the second highest macro F1 score, trailing _Sun et. al_ by only 0.12 (see _Table 5_). We also achieved the third highest micro F1 score, behind _@sun-etal-2018-stance _ and _@sobhani-etal-2016-detecting,_.  Note that micro F1 score tends to be higher for models that perform better on the majority class, while macro F1 score tends to be higher for models that perform well on all classes. This can be seen in the comparison between the majority classifier's micro and macro F1 scores.  The majority classifier scores a 65.22 on micro F1 score, but only 40.09 on macro F1.  Our model achieved universally higher results than the majority classifier. See _\autoref{fig:versus_majority}_.  
 
 ```{r plot_versus_majority, echo = FALSE, fig.height = 4, fig.width = 4, fig.align="center", fig.cap="\\label{fig:versus_majority}Results versus Majority Classifier"}
-measure_levels = c("F-micro", "F-macro", "Atheism", "Climate", "Feminism", "Hillary", "Abortion")
+measure_levels = c("F-microT", "F-macroT", "Atheism", "Climate", "Feminism", "Hillary", "Abortion")
 
 f_data = data.frame("measure" = c("F-microT", "F-macroT", "Atheism", "Climate", "Feminism", "Hillary", "Abortion") %>%
                       factor(levels = measure_levels)
@@ -289,7 +288,7 @@ ggplot(data = f_data) +
                      , legend.position = "bottom")
 ```
 
-\newpage
+<!-- \newpage -->
 
 # Limitations  
 
@@ -397,6 +396,6 @@ Going forward, there are a couple additional areas in which there is room for im
 
 Another potential area for improvement is training BERT from scratch rather than leveraging the pre-trained weights and subsequently fine-tuning with the SemEval-2016 Task 6 data.  If a large corpus could be obtained similar to that described in the **Data, Task, and Evaluation** section above, training BERT from scratch would likely result in a significant boost in F1 score. Lastly, given the small data set size and high skewness, putting effort into collecting more data to increase the sample size and balance out the classes would likely benefit the model performance.
 
-\newpage
+\pagebreak
 
 # References  
