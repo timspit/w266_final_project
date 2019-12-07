@@ -170,9 +170,9 @@ Table: Target Categories with Example Hastags
 
 After extracting the results, _@mohammad-etal-2016-dataset _ retained only tweets with the query hashtag at the end of the tweet. The query hashtag was then removed in order to exclude obvious clues for the classification task. Note that while this is a necessary step for the NLP task, removal of the query hashtag may actually change the stance of the tweet (e.g. if the hashtag was a negation of the preceding text).  
 
-Tweets were then annotated for stance using CrowdFlower (http://www.CrowdFlower.com), a website for crowd-sourced data annotation, where each tweet was annotated by at least eight reviewers. The raw inter-annotater agreement was 73.1%; however a cutoff was applied where only tweets with greater than 60% agreement were retained, increasing the average agreement to 81.85%. Lastly, the resulting tweets were split into train and test sets chronologically. (See the **Limitations** section for more on how this process may affect the classifcation task).
+Tweets were then annotated for stance using CrowdFlower (http://www.CrowdFlower.com), a website for crowd-sourced data annotation, where each tweet was annotated by at least eight reviewers. The raw inter-annotater agreement was 73.1%; however, a cutoff was applied where only tweets with greater than 60% agreement were retained, increasing the average agreement to 81.85%. Lastly, the resulting tweets were split into train and test sets chronologically. (See the **Limitations** section for more on how this process may affect the classifcation task).
 
-Models were trained independently to predict stance for each target separately. Performance was evaluated for each target using a modified F1 score, which took the macro-average of the "favor" and "against" class F1 scores only. This method was chosen to treat the "none" stance as a class that is not of interest (or negative class), though it still will affect the macro-average F1 scores. For evaluation of model performance across all targets, the micro-average of F1 scores was evaluated (referred to as **F-microT**). This was the score used as the official competition metric. Alternatively, the macro-average of the F1 scores can also be calculated (referred to as **F-macroT**) by averaging the modified F1 scores acheived for each target _(@mohammad-etal-2016-semeval)_.
+Models were trained independently to predict stance for each target separately. Performance was evaluated for each target using a modified F1 score, which took the macro-average of the "FAVOR" and "AGAINST" class F1 scores only. This method was chosen to treat the "NONE" stance as a class that is not of interest (or negative class), though it still will affect the macro-average F1 scores. For evaluation of model performance across all targets, the micro-average of F1 scores was evaluated (referred to as **F-microT**). This was the score used as the official competition metric. Alternatively, the macro-average of the F1 scores can also be calculated (referred to as **F-macroT**) by averaging the modified F1 scores acheived for each target _(@mohammad-etal-2016-semeval)_.
 
 # Related Work  
 
@@ -319,9 +319,10 @@ Going forward, there are a couple additional areas in which there is room for im
 
 Another potential area for improvement is training BERT from scratch rather than leveraging the pre-trained weights and subsequently fine-tuning with the SemEval-2016 Task 6 data.  If a large corpus could be obtained similar to that described in the **Data, Task, and Evaluation** section above, training BERT from scratch would likely result in a significant boost in F1 score. Lastly, given the small data set size and high skewness, putting effort into collecting more data to increase the sample size and balance out the classes would likely benefit the model performance.
 
-\newpage  
 
 # Appendix  
+
+\pagebreak 
 
 | Stance | Precision | Recall | F1 Score |
 | :--- | :--: | :--: | :--: |
@@ -342,7 +343,7 @@ bert_img = readPNG("images/Dessouky_Spittle_Model_Diagram.PNG")
 grid.raster(bert_img)
 ```
 
-```{r plot_versus_majority, echo = FALSE, fig.height = 4, fig.width = 4, fig.align="center", fig.cap="\\label{fig:versus_majority}Results versus Majority Classifier"}
+```{r plot_versus_majority, echo = FALSE, fig.height = 4, fig.width = 6, fig.align="center", fig.cap="\\label{fig:versus_majority}Results versus Majority Classifier"}
 measure_levels = c("F-microT", "F-macroT", "Atheism", "Climate", "Feminism", "Hillary", "Abortion")
 
 f_data = data.frame("measure" = c("F-microT", "F-macroT", "Atheism", "Climate", "Feminism", "Hillary", "Abortion") %>%
@@ -365,7 +366,7 @@ ggplot(data = f_data) +
                     , values = c(paired_palette[2], paired_palette[4], paired_palette[1], paired_palette[3])) +
   labs(x = "Topic/Measure", y = "Score") +
   theme_bw() + theme(axis.text.x = element_text(angle = 45, hjust = 1)
-                     , legend.position = "bottom")
+                     , legend.position = "right")
 ```
 
 ```{r confusion_matrix_chunk, echo = FALSE, fig.height = 4, fig.width = 4, fig.align="center", fig.cap="\\label{fig:confusion_matrix}Confusion Matrix"}
@@ -382,13 +383,13 @@ ggplot(data =  all_topics %>% group_by(true_label_f, predicted_label_f) %>% summ
   labs(caption = "Note: All Topics")
 ```
 
-```{r error_analysis_chunk, echo = FALSE, fig.height = 4, fig.width = 4, fig.align="center", fig.cap="\\label{fig:error_analysis}Atheism Error Analysis Summary of Issues"}
+```{r error_analysis_chunk, echo = FALSE, fig.height = 4, fig.width = 6, fig.align="center", fig.cap="\\label{fig:error_analysis}Atheism Error Analysis Summary of Issues"}
 ggplot(data = atheism_errors_grouped
        , aes(x = true_label_f, y = count, fill = issue)) +
   geom_bar(position = "stack", stat = "identity", color = "black") +
   labs(x = "True Label", y = "Count") +
   scale_fill_discrete(name = "Issue") +
-  theme_bw() + theme(legend.position = "bottom")
+  theme_bw() + theme(legend.position = "right")
 ```
 
 \newpage  
