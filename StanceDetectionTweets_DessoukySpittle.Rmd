@@ -33,7 +33,7 @@ options(tinytex.verbose = TRUE)
 ```
 
 ```{r data_import, include = FALSE}
-label_levels = c("AGAINST", "NONE", "FAVOR")
+label_levels = c("Against", "None", "Favor")
 
 # IMPORT
 import_topic = function(topic_name){
@@ -54,13 +54,13 @@ import_topic = function(topic_name){
           , by = "obs_num"
           , all.x = TRUE) %>%
     mutate(topic = topic_name
-           , predicted_label_f = case_when(predicted_label == 0 ~ "AGAINST"
-                                         , predicted_label == 1 ~ "NONE"
-                                         , predicted_label == 2 ~ "FAVOR"
+           , predicted_label_f = case_when(predicted_label == 0 ~ "Against"
+                                         , predicted_label == 1 ~ "None"
+                                         , predicted_label == 2 ~ "Favor"
                                          , TRUE ~ NA_character_) %>% factor(levels = label_levels)
-           , true_label_f = case_when(true_label == 0 ~ "AGAINST"
-                                    , true_label == 1 ~ "NONE"
-                                    , true_label == 2 ~ "FAVOR"
+           , true_label_f = case_when(true_label == 0 ~ "Against"
+                                    , true_label == 1 ~ "None"
+                                    , true_label == 2 ~ "Favor"
                                     , TRUE ~ NA_character_) %>% factor(levels = label_levels)
     )
   return(merged)
@@ -125,9 +125,9 @@ all_topics_errors = all_topics %>%
   filter(predicted_label != true_label) %>%
   select(obs_num, topic, tweet, predicted_label_f, true_label_f)
 
-# Use below if needed to export raw errors again #########################################
+##################### Use below if needed to export raw errors again #####################
 # write.csv(all_topics_errors, file = "./final_outputs/all_topics_errors.csv")
-# Import manually reviewed workbook ######################################################
+##########################################################################################
 all_topics_errors_reviewed = read.xlsx("./final_outputs/all_topics_errors_reviewed.xlsx", sheet = "all_topics_errors")
 
 atheism_errors_annotated = all_topics_errors_reviewed %>%
@@ -142,7 +142,7 @@ atheism_errors_grouped = atheism_errors_annotated %>%
 
 ## Background  
 
-Stance classification is a natural language processing (NLP) task that seeks to automatically determine the "stance" of a statement in relation to a "target". The stance the author of that statement can take is either in **favor** of the target, **against** the target, or **neutral** toward the target. A target can be anything, from a proposition to an idea, a person, a political issue, etc. The stance of any statement can be assessed against any target. However, since the statement may not address the target at all, it is possible that the author's stance towards the target of evaluation cannot be determined. In certain circumstances where the at-issue target is not addressed directly, the stance of a statement can be determined by inference from association with another target.
+Stance classification is a natural language processing (NLP) task that seeks to automatically determine the "stance" of a statement in relation to a "target". The stance the author of that statement can take is either in **favor** of the target, **against** the target, or **neutral** toward the target. A target can be anything, from a proposition to an idea, a person, a political issue, etc. The stance of any statement can be assessed against any target. However, since the statement may not address the target at all, it is possible that the author's stance towards a target of interest cannot be determined. In certain circumstances where the at-issue target is not addressed directly, the stance of a statement can be determined by inference from association with another target.
 
 Given an abundance of online discourse on social media, automatic stance detection of social media content is an appealing task with widespread potential applications. In particular, Twitter is a social media platform with an incredibly fast-paced environment where many tweets are shared back-and-forth addressing a variety of topics and issues. Stance classification of tweets has applications across many domains: marketing industry efforts to measure public opinions on products, political campaign attempts to measure public views on candidates' policies, and efforts by Twitter to identify bad actors (i.e., "trolls"). While there has been significant research in stance classification with respect to debates and online forums, Twitter poses a new challenge as many "tweeters" represent their stance towards a target implicitly and often use figurative language, shorthand, acronyms, or hashtags.   
 
@@ -158,7 +158,7 @@ The dataset consists of approximately 5,000 tweet-target pairs annotated for bot
 
 The process for collecting and annotating these tweets is detailed in _@mohammad-etal-2016-dataset _. The authors queried Twitter for topic-specific hashtags in an effort to collect a full corpus of tweets related to the intended targets. These targets and example topic-specific hashtags are presented in _Table 1_ below:  
 
-| Target | FAVOR | AGAINST |
+| Target | Favor | Against |
 | :---- | :--: | :--: |
 | **Atheism** | _#NoMoreReligions_ | _#GodsWill_ |
 | **Climate Change is a Real Concern** | - | _#GlobalWarmingHoax_ |
@@ -172,7 +172,7 @@ After extracting the results, _@mohammad-etal-2016-dataset _ retained only tweet
 
 Tweets were then annotated for stance using CrowdFlower (http://www.CrowdFlower.com), a website for crowd-sourced data annotation, where each tweet was annotated by at least eight reviewers. The raw inter-annotater agreement was 73.1%; however a cutoff was applied where only tweets with greater than 60% agreement were retained, increasing the average agreement to 81.85%. Lastly, the resulting tweets were split into train and test sets chronologically. (See the **Limitations** section for more on how this process may affect the classifcation task).
 
-Models were trained independently to predict stance for each target separately. Performance was evaluated for each target using a modified F1 score, which took the macro-average of the FAVOR and AGAINST class F1 scores only. This method was chosen to treat the "none" stance as a class that is not of interest (or negative class), though it still will affect the macro-average F1 scores. For evaluation of model performance across all targets, the micro-average of F1 scores was evaluated (referred to as **F-microT**). This was the score used as the official competition metric. Alternatively, the macro-average of the F1 scores can also be calculated (referred to as **F-macroT**) by averaging the modified F1 scores acheived for each target _(@mohammad-etal-2016-semeval)_.
+Models were trained independently to predict stance for each target separately. Performance was evaluated for each target using a modified F1 score, which took the macro-average of the "favor" and "against" class F1 scores only. This method was chosen to treat the "none" stance as a class that is not of interest (or negative class), though it still will affect the macro-average F1 scores. For evaluation of model performance across all targets, the micro-average of F1 scores was evaluated (referred to as **F-microT**). This was the score used as the official competition metric. Alternatively, the macro-average of the F1 scores can also be calculated (referred to as **F-macroT**) by averaging the modified F1 scores acheived for each target _(@mohammad-etal-2016-semeval)_.
 
 # Related Work  
 
@@ -186,7 +186,7 @@ SVM was chosen as a baseline since it is effective on text categorization tasks 
 
 Several of the competing teams within the SemEval-2016 Task 6 competition took a **neural network** approach to the challenge. _@zarrella-marsh-2016-mitre,_ the winner of the competition, leveraged transfer learning to perform the classification task.  The team sampled 200 million+ relevant tweets to create an auxiliary 'hashtag prediction task', which was used as a projection into a Long Short Term Memory (LSTM) - Recurrent Neural Net (RNN) layer. _@wei-etal-2016-pkudblab _ and _@vijayaraghavan-etal-2016-deepstance _ both implemented convolutional neural networks; however, these models did not achieve the same level of success as _Zarrella and Marsh (2016)_.  
 
-## Subsequent SemEval Task 6 Progress  
+## Subsequent SemEval Progress  
 
 Since Sem-Eval 2016, there have been two additional contributions to this task of note.  Both _@sun-etal-2018-stance _ and _@ijcai2017-557 _ leveraged **neural attention networks** to perform stance classification, with each team achieving higher final F1 scores than the winner of the initial competition.  Although several of the competing teams found effective models, none were able to achieve higher final F1 scores than the improved SVM baseline from _@sobhani-etal-2016-detecting _.  This also holds for _@sun-etal-2018-stance _ and _@ijcai2017-557 _'s work after the conference ended.   
 
@@ -210,7 +210,7 @@ As previously mentioned, we expect a model that has the capacity to capture the 
 
 ## Hyperparameter Tuning  
 
-Since independent models were trained for each of the five topics, we tuned the model's hyperparameters on a single topic, Hillary Clinton, and then applied the results to the remaining topics. Hillary Clinton was selected because it contained the most consistent balance of classes within both the training and test sets. In addition, its majority class was the AGAINST stance label, which was consistent with all the other topics, excluding Climate Change.  Our overall approach for hyperparameter tuning was trial and error. \autoref{fig:hyperparam_table} below details the hyperparameters we focused on as well as the final value implemented in our models.  
+Since independent models were trained for each of the five topics, we tuned the model's hyperparameters on a single topic, Hillary Clinton, and then applied the results to the remaining topics. Hillary Clinton was selected because it contained the most consistent balance of classes within both the training and test sets. In addition, its majority class was the 'AGAINST' stance label, which was consistent with all the other topics, excluding Climate Change.  Our overall approach for hyperparameter tuning was trial and error. \autoref{fig:hyperparam_table} below details the hyperparameters we focused on as well as the final value implemented in our models.  
 
 | Hyperparameter | Final Value |
 | :------------- | :---------- |
@@ -245,18 +245,18 @@ Our model's results are summarized in the tables below. _\autoref{fig:f1rank_tab
 
 Table: \label{fig:f1rank_table} Final F1 Scores with Ranks  
 
-| Team | F-microT <br> (All Targets) | F-macroT <br> (All Targets) | Atheism | Climate | Feminism | Hillary | Abortion |
-| :--------------- | :-------: | :-------: | :---: | :---: | :---: | :---: | :---: |
-| Sobhani et. al       | **70.32** | 59.01 | 69.19 | 43.80 | 58.72 | 61.74 | **66.91** |
-| Sun et. al           | 69.79 | **61.00** | **70.53** | 49.56 | 57.50 | 61.84 | 66.16 |
-| **Dessouky/Spittle** | 69.72 | 60.88 | 69.66 | 48.47 | 57.76 | 64.48 | 64.06 |
-| Du et. al            | 68.79 | 59.56 | 59.77 | **53.59** | 55.77 | 65.38 | 63.72 |
-| MITRE                | 67.82 | 56.03 | 61.47 | 41.63 | **62.09** | 57.67 | 57.28 |
-| pkudblab             | 67.33 | 58.57 | 63.34 | 52.69 | 51.33 | 64.41 | 61.09 |
-| TakeLab              | 66.83 | 58.00 | 67.25 | 41.25 | 53.01 | **67.12** | 61.38 |
-| Majority Class       | 65.22 | 40.09 | 42.11 | 42.12 | 39.10 | 36.83 | 40.30 |
-| DeepStance           | 63.54 | 52.86 | 52.90 | 40.40 | 52.34 | 55.35 | 63.32 |
-| IDI@NTNU             | 62.47 | 55.08 | 59.59 | 54.86 | 48.59 | 57.89 | 54.47 |
+| Team | F-microT (All Targets) | F-macroT (All Targets) | Atheism | Climate | Feminism | Hillary | Abortion |
+| :--------------- | :---------: | :---------: | :---: | :---: | :---: | :---: | :---: |
+| Sobhani et. al         | **70.32** | 59.01 | 69.19 | 43.80 | 58.72 | 61.74 | **66.91** |
+| Sun et. al             | 69.79 | **61.00** | **70.53** | 49.56 | 57.50 | 61.84 | 66.16 |
+| **Dessouky & Spittle**  | 69.72 | 60.88 | 69.66 | 48.47 | 57.76 | 64.48 | 64.06 |
+| Du et. al               | 68.79 | 59.56 | 59.77 | **53.59** | 55.77 | 65.38 | 63.72 |
+| MITRE                   | 67.82 | 56.03 | 61.47 | 41.63 | **62.09** | 57.67 | 57.28 |
+| pkudblab                | 67.33 | 58.57 | 63.34 | 52.69 | 51.33 | 64.41 | 61.09 |
+| TakeLab                 | 66.83 | 58.00 | 67.25 | 41.25 | 53.01 | **67.12** | 61.38 |
+| Majority Class          | 65.22 | 40.09 | 42.11 | 42.12 | 39.10 | 36.83 | 40.30 |
+| DeepStance              | 63.54 | 52.86 | 52.90 | 40.40 | 52.34 | 55.35 | 63.32 |
+| IDI@NTNU                | 62.47 | 55.08 | 59.59 | 54.86 | 48.59 | 57.89 | 54.47 |
 
 Table: \label{fig:f1all_table} F1 Scores for all state-of-the-art models  
 
@@ -266,64 +266,70 @@ The results in the above tables demonstrate the strength of our model.  When com
 
 While we were able to build an effective model for stance detection, we came across a number of apparent limitations. First, as mentioned within the **Data, Task, and Evaluation** section, the key query hashtags were removed from the training and test data, which would have been incredibly valuable in determining stance in the real world.  Next, the stance labels were highly skewed. _\autoref{fig:data_dst}_ below shows the distribution of the labels for each target. While we allocated higher weights to the minority classes during the training process, our model still proved to be much more effective in predicting the majority class versus the minority classes.
 
-| Target | Total (#) | Train (#) | FAVOR (% of train) | NONE (% of train) | AGAINST (% of train) | Test (#) | FAVOR (% of test) | NONE (% of test) | AGAINST (% of test
-| :--------- | :-----: | :-----: | :-----: | :-----: | :-----: | :-----: | :-----: | :-----: | :-----: |
-| Atheism   | 733 | 513 | 17.9 | 59.3 | 22.8 | 220 | 14.5 | 72.7 | 12.7 |
-| Climate   | 564 | 395 | 53.7 | 3.8 | 42.5 | 169 | 72.8 | 6.5 | 20.7 |
-| Feminism  | 949 | 664 | 31.6 | 49.4 | 19.0 | 285 | 20.4 | 64.2 | 15.4 |
-| Hillary   | 984 | 689 | 17.1 | 57.0 | 25.8 | 295 | 15.3 | 58.3 | 26.4 |
-| Abortion  | 933 | 653 | 18.5 | 54.4 | 27.1 | 280 | 16.4 | 57.3 | 18.4 |
+| Target | # total | # train | favor (% of train) | none (% of train) | against (% of train) | # test | favor (% of test) | none (% of test) | against (% of test
+| :--------------- | :-----: | :-----: | :-----: | :-----: | :-----: | :-----: | :-----: | :-----: | :-----: |
+| Atheism | 733 | 513 | 17.9 | 59.3 | 22.8 | 220 | 14.5 | 72.7 | 12.7 |
+| Climate Change | 564 | 395 | 53.7 | 3.8 | 42.5 | 169 | 72.8 | 6.5 | 20.7 |
+| Feminist Movement | 949 | 664 | 31.6 | 49.4 | 19.0 | 285 | 20.4 | 64.2 | 15.4 |
+| Hillary Clinton | 984 | 689 | 17.1 | 57.0 | 25.8 | 295 | 15.3 | 58.3 | 26.4 |
+| Legalization of Abortion | 933 | 653 | 18.5 | 54.4 | 27.1 | 280 | 16.4 | 57.3 | 18.4 |
 
 Table: \label{fig:data_dst} Data distribution  
 
-Additionally, the authors of the original dataset made the choice to split the train and test data chronologically, which may have adversely effected the comparability of the train and test set. This may be a borader limitation of Tweet analysis in general: given the velocity of conversation it may be difficult to train and maintain a model that stays relevant. But the acute issue in this dataset is if something happened between the train and test data where people began using a new hashtag or discussing something in the news, our model will not have been trained to detect that context.  
-
-In addition, there was a high level of disagreement amongst the label 'encoders', which translates to a higher expected error rate in our model. We can expect our model to struggle classifying the stance of tweets in which humans do not consistently agree. Further, the total number of tweets in our dataset was low for what is standard for a NLP problem. This may affect the reproducibility of our model results.  Re-running the same model on the identical training and test sets would produce slightly different results, despite fitting the training data to near 100% accuracy.
+In addition, there was a high level of disagreement amongst the label 'encoders', which translates to a higher expected error rate in our model. We can expect our model to struggle classifying the stance of tweets in which humans do not consistently agree. Further, the total number of tweets in our dataset was low for a NLP problem. This may affect the reproducibility of our model results.  Re-running the same model on the identical training and test sets would produce slightly different results, despite fitting the training data to near 100% accuracy.
 
 ## Error Analysis  
 
-_\autoref{fig:confusion_matrix}_ in the *Appendix* presents a confusion matrix detailing the distribution of predicted versus true labels for our model. Given that the AGAINST stance label is the majority class, it is no surprise that the largest contributors to errors are false-negative AGAINST observations.  
+_\autoref{fig:confusion_matrix}_ in the *Appendix* presents a confusion matrix detailing the distribution of predicted versus true labels for our model. Given that the 'AGAINST' stance label is the majority class, it is no surprise that the largest contributors to errors are false-negative 'AGAINST' observations.  
 
-Errors for target **Atheism** were manually reviewed to better understand the nature of mis-classified tweets. Errors were categorized according to whether the purported true label or the predicted label from our model appeared to be correct (or if neither appeared correct). _\autoref{fig:error_analysis}_ in the *Appendix* shows the results of this error review and annotation.   
+Errors for target **Atheism** were manually reviewed to better understand the nature of mis-classified tweets. Errors were categorized according to whether the purported true label or the predicted label from our model appeared to be correct (or if neither appeared correct). \autoref{fig:error_analysis} in the *Appendix* shows the results of this error review and annotation.   
 
 It was surprising how many tweets appeared to have been assigned the incorrect true label. To be clear, there is a substantial amount of ambiguity in these tweets (as has been mentioned, there was a high degree of disagreement among encoders), but we will detail different types of mis-labeled tweets to highlight where and how we think encoders were mistaken.  
 
 First and foremost, some tweet true labels were unambiguously incorrect. The below tweet positively discusses the target directly (atheists/atheism) and even uses a hashtag that is clearly opposed to religion (and therefore aligned with atheism). 
 
-> **True Label**: AGAINST | **Predicted**: FAVOR | **Correct**: FAVOR (True label wrong)  
+> **Topic**: Atheism | **True Label**: Against | **Predicted Label**: Favor | **Correct**: Favor  
 `r atheism_errors_annotated %>% filter(topic == "atheism" & examples == "blatant") %>% select(tweet) %>% str_replace("@", "[AT]")`  
 
-Other true label error examples have common challenges with the tweet text that may have caused some of these errors in annotation. Generally, ambiguous texts suffer from some form of lack of context. _Missing Context_ errors occur when certain tweets reference specific people or things for which the tweet text alone does not fully capture a state of being. The below tweet, for example, references "those quotes" which we do not see, therefore we cannot make a judgment as to how "showing 'em the quotes" would align with the target. It could be infered, based on typical use of this type of language and the quotations around "Christian Nation" that this person more likely supports atheism.  
+Other true label error examples have common challenges with the tweet text that may have caused some of these errors in annotation. Generally, ambiguous texts suffer from some form of lack of context. _Missing Context_ errors occur when certain tweets reference specific people or things that may be hard to align with the target or require a leap in assumption about connection to the target. The below tweet, for example, references "those quotes" which we do not see. Therefore, we cannot make a judgment as to how "showing 'em the quotes" would align with the target.  
 
-> **True Label**: AGAINST | **Predicted**: FAVOR | **Correct**: None (Both wrong)  
+> **Topic**: Atheism | **True Label**: Against | **Predicted Label**: Favor | **Correct**: Favor  
 `r atheism_errors_annotated %>% filter(topic == "atheism" & examples == "missing_context") %>% select(tweet) %>% str_replace("@", "[AT]")`  
 
-Similarly, _Referential_ errors occur when other tweets reference a target other than the target of interest and an unreasonable leap in assumption is made to come to a conclusion on that author's potential stance on the at-issue target. This is apparent in the below tweet where the initial query hashtag, which is not presented (replaced with _#SemST_), could be the point that makes the author's stance clear. However, without it, it is not reasonable to draw the conclusion that celebrating Independence Day and the constitution exhibits a stance against Atheism.  
+Similarly, _Referential_ errors occur when other tweets reference a target other than the target of interest and an unreasonable leap in assumption is made to come to a conclusion on that author's potential stance on the target. This is apparent in the below tweet where the initial query hashtag, which is not presented, could be the point that makes the author's stance clear. However, without it, it is not reasonable to draw the conclusion that celebrating Independence Day and the constitution exhibits a stance against Atheism.  
 
-> **True Label**: AGAINST | **Predicted**: NONE | **Correct**: NONE (True label wrong)  
+> **Topic**: Atheism | **True Label**: Against | **Predicted Label**: Neither | **Correct**: Neither  
 `r atheism_errors_annotated %>% filter(topic == "atheism" & examples == "referential") %>% select(tweet) %>% str_replace("@", "[AT]")`  
 
 Lastly, a common problem in sentiment analysis is _Sarcasm_. The below two example tweets (which exhibit both mis-labeled data and an error of our model's prediction) are clearly joking/mocking.  
 
-> **True Label**: AGAINST | **Predicted**: FAVOR | **Correct**: FAVOR (True label wrong)  
+> **Topic**: Atheism | **True Label**: Against | **Predicted Label**: Favor | **Correct**: Favor  
 `r atheism_errors_annotated %>% filter(topic == "atheism" & examples == "sarcasm" & issue == "True label wrong") %>% select(tweet) %>% str_replace("@", "[AT]")`
 
-> **True Label**: AGAINST | **Predicted**: FAVOR | **Correct**: AGAINST (Our model wrong)  
+> **Topic**: Atheism | **True Label**: Against | **Predicted Label**: Favor | **Correct**: Against  
 `r atheism_errors_annotated %>% filter(topic == "atheism" & examples == "sarcasm" & issue == "Our model wrong") %>% select(tweet) %>% str_replace("@", "[AT]")`  
 
-This apparent mis-labeling obviously causes some concern about the ability to train a model consistently that performs well on unseen data. However, the majority of instances reviewed where our model made obvious mistakes were clearly incorrect predictions where no systematic issues were evident that would need to be addressed in our model specification. It is notable that our model made consistent errors across true label categories. Conversely, the annotaters made errors almost exclusively in the majority AGAINST stance label. The AGAINST stance constitutes 73% of test set data observations for the Atheism target, indicating that some amount of the errors may be attributable to fatigue, perhaps, or some factor that causes repeated annotation to lean toward the majority class.  
+This apparent mis-labeling obviously causes some concern about the ability to train a model consistently that performs well on unseen data. However, the majority of instances reviewed where our model made obvious mistakes were clearly incorrect predictions. There were no systematic issues. It is notable that our model made consistent errors across true label categories. Conversely, the annotaters made errors almost exclusively in the majority 'AGAINST' stance label. The 'AGAINST' stance constitutes 73% of test set data observations for the Atheism target, indicating that some amount of the errors may be attributable to fatigue, perhaps, or some factor that causes repeated annotation to lean toward the majority class.  
 
 # Conclusion and Future Work
 
-In this paper, we implement BERT for contextualized word embeddings in a neural network model used to effectively detect stance of tweets.  We propose a novel model architecture for use on the SemEval-2016 Task 6 dataset.  While we did not beat the current top score, we obtained results in line with several of the state-of-the-art models. We achieved a F-microT of 69.72 and a F-macroT of 60.88, which ranked 3rd and 2nd, respectively, amongst all contributors to the task. This demonstrates the potential BERT has as a method of obtaining contextualized word embeddings for the purpose of stance classification.
+In this paper, we implement BERT for contextualized word embeddings in a neural network model used to effectively detect stance.  We propose a novel model architecture for use on the SemEval-2016 Task 6 dataset.  While we did not beat the current top score, we obtained results in line with several of the state-of-the-art models. We achieved a F-microT of 69.72 and a F-macroT of 60.88, which ranked 3rd and 2nd, respectively, amongst all contributors to the task. This demonstrates the potential BERT has as a method of obtaining contextualized word embeddings for the purpose of stance classification.
 
 Going forward, there are a couple additional areas in which there is room for improvement.  First, the use of a bidirectional LSTM layer in lieu of the current LSTM layer implemented in our model could be explored.  In addition, the benefits of using BERT Large in the embedding layer in place of BERT Base could be investigated.
 
 Another potential area for improvement is training BERT from scratch rather than leveraging the pre-trained weights and subsequently fine-tuning with the SemEval-2016 Task 6 data.  If a large corpus could be obtained similar to that described in the **Data, Task, and Evaluation** section above, training BERT from scratch would likely result in a significant boost in F1 score. Lastly, given the small data set size and high skewness, putting effort into collecting more data to increase the sample size and balance out the classes would likely benefit the model performance.
 
+\newpage  
+
 # Appendix  
 
-\newpage 
+| Stance | Precision | Recall | F1 Score |
+| :--- | :--: | :--: | :--: |
+| Against | 81.73 | 67.55 | 73.97 |
+| None | 50.34 | 64.78 | 56.65 |
+| Favor | 60.22 | 71.71 | 65.47 |
+
+Table: \label{fig:classreport_table} Classification Report  
 
 ```{r bert_by_task_fig, echo = FALSE, fig.height = 4, fig.width = 4, fig.align="center", fig.cap="\\label{fig:bert_by_task}BERT by Task (Source: Devlin et al.)"}
 bert_img = readPNG("images/bert_bytask.png")
@@ -331,19 +337,12 @@ grid.raster(bert_img)
 ```
 
 ```{r model_diagram_chunk, echo = FALSE, fig.height = 6, fig.width = 6, fig.align="center", fig.cap="\\label{fig:model_diagram}Model Diagram"}
+# knitr::include_graphics("images/Dessouky_Spittle_Model_Diagram.PNG")
 bert_img = readPNG("images/Dessouky_Spittle_Model_Diagram.PNG")
 grid.raster(bert_img)
 ```
 
-| Stance | Precision | Recall | F1 Score |
-| :--- | :--: | :--: | :--: |
-| AGAINST | 81.73 | 67.55 | 73.97 |
-| NONE | 50.34 | 64.78 | 56.65 |
-| FAVOR | 60.22 | 71.71 | 65.47 |
-
-Table: \label{fig:classreport_table} Classification Report  
-
-```{r plot_versus_majority, echo = FALSE, fig.height = 4, fig.width = 6, fig.align="center", fig.cap="\\label{fig:versus_majority}Results versus Majority Classifier"}
+```{r plot_versus_majority, echo = FALSE, fig.height = 4, fig.width = 4, fig.align="center", fig.cap="\\label{fig:versus_majority}Results versus Majority Classifier"}
 measure_levels = c("F-microT", "F-macroT", "Atheism", "Climate", "Feminism", "Hillary", "Abortion")
 
 f_data = data.frame("measure" = c("F-microT", "F-macroT", "Atheism", "Climate", "Feminism", "Hillary", "Abortion") %>%
@@ -366,7 +365,7 @@ ggplot(data = f_data) +
                     , values = c(paired_palette[2], paired_palette[4], paired_palette[1], paired_palette[3])) +
   labs(x = "Topic/Measure", y = "Score") +
   theme_bw() + theme(axis.text.x = element_text(angle = 45, hjust = 1)
-                     , legend.position = "right")
+                     , legend.position = "bottom")
 ```
 
 ```{r confusion_matrix_chunk, echo = FALSE, fig.height = 4, fig.width = 4, fig.align="center", fig.cap="\\label{fig:confusion_matrix}Confusion Matrix"}
@@ -380,20 +379,18 @@ ggplot(data =  all_topics %>% group_by(true_label_f, predicted_label_f) %>% summ
   labs(x = "True Label", y = "Predicted Label") +
   scale_y_discrete(limits = rev(label_levels)) +
   scale_x_discrete(limits = rev(label_levels)) +
-  labs(caption = "All Targets")
+  labs(caption = "Note: All Topics")
 ```
 
-```{r error_analysis_chunk, echo = FALSE, fig.height = 4, fig.width = 6, fig.align="center", fig.cap="\\label{fig:error_analysis}Atheism Error Analysis Summary of Issues"}
+```{r error_analysis_chunk, echo = FALSE, fig.height = 4, fig.width = 4, fig.align="center", fig.cap="\\label{fig:error_analysis}Atheism Error Analysis Summary of Issues"}
 ggplot(data = atheism_errors_grouped
        , aes(x = true_label_f, y = count, fill = issue)) +
   geom_bar(position = "stack", stat = "identity", color = "black") +
   labs(x = "True Label", y = "Count") +
   scale_fill_discrete(name = "Issue") +
-  theme_bw() + theme(legend.position = "right") +
-  scale_x_discrete(limits = rev(label_levels)) +
-  labs(caption = "Target: Atheism")
+  theme_bw() + theme(legend.position = "bottom")
 ```
 
-\pagebreak  
+\newpage  
 
 # References  
