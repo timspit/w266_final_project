@@ -169,9 +169,9 @@ Table: Target categories with example hastags
 
 After extracting the results, _@mohammad-etal-2016-dataset _ retained only tweets with the query hashtag at the end of the tweet. The query hashtag was then removed in order to exclude obvious clues for the classification task. Note that while this is a necessary step for the NLP task, removal of the query hashtag may actually change the stance of the tweet (e.g. if the hashtag was a negation of the preceding text).  
 
-Tweets were then annotated for stance using CrowdFlower (http://www.CrowdFlower.com), a website for crowd-sourced data annotation, where each tweet was annotated by at least eight reviewers. The raw inter-annotater agreement was 73.1%; however a cutoff was applied where only tweets with greater than 60% agreement were retained, increasing the average agreement to 81.85%. Lastly, the resulting tweets were split into train and test sets chronologically. (See the **Limitations** section for more on how this process may affect the classifcation task).
+Tweets were then annotated for stance using CrowdFlower (http://www.CrowdFlower.com), a website for crowd-sourced data annotation, where each tweet was annotated by at least eight reviewers. The raw inter-annotater agreement was 73.1%; however, a cutoff was applied where only tweets with greater than 60% agreement were retained, increasing the average agreement to 81.85%. Lastly, the resulting tweets were split into train and test sets chronologically. (See the **Limitations** section for more on how this process may affect the classifcation task).
 
-Models were trained independently to predict stance for each target separately. Performance was evaluated for each target using a modified F1 score, which took the macro-average of the FAVOR and AGAINST class F1 scores only. This method was chosen to treat the NONE stance as a class that is not of interest (or negative class), though it still will affect the macro-average F1 scores. For evaluation of model performance across all targets, the micro-average of F1 scores was evaluated (referred to as **F-microT**). This was the score used as the official competition metric. Alternatively, the macro-average of the F1 scores can also be calculated (referred to as **F-macroT**) by averaging the modified F1 scores acheived for each target _(@mohammad-etal-2016-semeval)_.
+Models were trained independently to predict stance for each target separately. Performance was evaluated for each target using a modified F1 score, which took the macro-average of the FAVOR and AGAINST class F1 scores only. This method was chosen to treat the NONE stance as a class that is not of interest (or negative class), though it still will affect the macro-average F1 scores. For evaluation of model performance across all targets, the micro-average of F1 scores was evaluated (referred to as **F-microT**). This was the score used as the official competition metric. Alternatively, the macro-average of the F1 scores can also be calculated (referred to as **F-macroT**) by averaging the modified F1 scores achieved for each target _(@mohammad-etal-2016-semeval)_.
 
 # Related Work  
 
@@ -199,7 +199,7 @@ Further, _@ma-unpublished _ experimented with various infrastructures built on t
 
 # Model  
 
-Next, we describe the model we implemented to approach SemEval-2016 Task 6. After reviewing the work performed by contributing members of the competition, we hypothesized that a neural network which effectively captures the context of the limited characters and words contained in a tweet would perform well in classifying stance from Twitter data. Words contained in tweets cannot always be taken at face value. Hashtags, sarcasm, irony, and other forms of rhetoric are frequently found in tweets, and we would want our model to effectively capture these nuances since it contains valuable information about the author's stance. 
+Next, we describe the model we implemented to approach SemEval-2016 Task 6. After reviewing the work performed by contributing members of the competition, we hypothesized that a neural network which effectively captures the context of the limited characters and words contained in a tweet would perform well in classifying stance from Twitter data. Words contained in tweets cannot always be taken at face value. Hashtags, sarcasm, irony, and other forms of rhetoric are frequently found in tweets, and we would want our model to effectively capture these nuances since it contains valuable information about the author's stance.
 
 ## Infrastructure  
 
@@ -285,7 +285,7 @@ Errors for target **Atheism** were manually reviewed to better understand the na
 
 It was surprising how many tweets appeared to have been assigned the incorrect true label. To be clear, there is a substantial amount of ambiguity in these tweets (as has been mentioned, there was a high degree of disagreement among encoders), but we will detail different types of mis-labeled tweets to highlight where and how we think encoders were mistaken.  
 
-First and foremost, some tweet true labels were unambiguously incorrect. The below tweet positively discusses the target directly (atheists/atheism) and even uses a hashtag that is clearly opposed to religion (and therefore aligned with atheism), yet the true label was encoded as AGAINST. 
+First and foremost, some tweet true labels were unambiguously incorrect. The below tweet positively discusses the target directly (atheists/atheism) and even uses a hashtag that is clearly opposed to religion (and therefore aligned with atheism), yet the true label was encoded as AGAINST.
 
 > **True Label**: AGAINST | **Predicted**: FAVOR | **Correct**: FAVOR (True label wrong)  
 `r atheism_errors_annotated %>% filter(topic == "atheism" & examples == "blatant") %>% select(tweet) %>% str_replace("@", "[AT]")`  
@@ -364,7 +364,7 @@ ggplot(data = f_data) +
                     , values = c(paired_palette[2], paired_palette[4], paired_palette[1], paired_palette[3])) +
   labs(x = "Topic/Measure", y = "Score") +
   theme_bw() + theme(axis.text.x = element_text(angle = 45, hjust = 1)
-                     , legend.position = "bottom")
+                     , legend.position = "right")
 ```
 
 ```{r confusion_matrix_chunk, echo = FALSE, fig.height = 4, fig.width = 4, fig.align="center", fig.cap="\\label{fig:confusion_matrix}Confusion Matrix"}
@@ -387,7 +387,7 @@ ggplot(data = atheism_errors_grouped
   geom_bar(position = "stack", stat = "identity", color = "black") +
   labs(x = "True Label", y = "Count") +
   scale_fill_discrete(name = "Issue") +
-  theme_bw() + theme(legend.position = "bottom")
+  theme_bw() + theme(legend.position = "right")
 ```
 
 \newpage  
