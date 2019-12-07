@@ -341,7 +341,7 @@ grid.raster(bert_img)
 
 Table: \label{fig:classreport_table} Classification Report  
 
-```{r plot_versus_majority, echo = FALSE, fig.height = 4, fig.width = 4, fig.align="center", fig.cap="\\label{fig:versus_majority}Results versus Majority Classifier"}
+```{r plot_versus_majority, echo = FALSE, fig.height = 4, fig.width = 6, fig.align="center", fig.cap="\\label{fig:versus_majority}Results versus Majority Classifier"}
 measure_levels = c("F-microT", "F-macroT", "Atheism", "Climate", "Feminism", "Hillary", "Abortion")
 
 f_data = data.frame("measure" = c("F-microT", "F-macroT", "Atheism", "Climate", "Feminism", "Hillary", "Abortion") %>%
@@ -390,6 +390,8 @@ ggplot(data = atheism_errors_grouped
   theme_bw() + theme(legend.position = "right")
 ```
 
-\newpage  
+\pagebreak  
+
+\pagebreak
 
 # References  
