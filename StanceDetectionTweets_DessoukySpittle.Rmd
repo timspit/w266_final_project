@@ -265,7 +265,7 @@ The results in the above tables demonstrate the strength of our model.  When com
 
 While we were able to build an effective model for stance detection, we came across a number of apparent limitations. First, as mentioned within the **Data, Task, and Evaluation** section, the key query hashtags were removed from the training and test data, which would have been incredibly valuable in determining stance in the real world.  Next, the stance labels were highly skewed. _\autoref{fig:data_dst}_ below shows the distribution of the labels for each target. While we allocated higher weights to the minority classes during the training process, our model still proved to be much more effective in predicting the majority class versus the minority classes.
 
-| Target | Total (#) | Train (#) | FAVOR (%) | NONE (%) | AGAINST (%) | Test (#) | FAVOR (%) | NONE (%) | AGAINST (%) |
+| Target | Total (#) | Train (#) | FAVOR (%) | AGAINST (%) | NONE (%) | Test (#) | FAVOR (%) | AGAINST (%) | NONE (%) |
 | :------------- | :-----: | :-----: | :-----: | :-----: | :-----: | :-----: | :-----: | :-----: | :-----: |
 | Atheism  | 733 | 513 | 17.9% | 59.3% | 22.8% | 220 | 14.5% | 72.7% | 12.7%|
 | Climate  | 564 | 395 | 53.7% | 3.8%  | 42.5% | 169 | 72.8% | 6.5%  | 20.7% |
